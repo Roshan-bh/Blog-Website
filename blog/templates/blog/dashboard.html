@@ -1,0 +1,80 @@
+{% extends 'blog/base.html' %}
+{% block title %}MINIBLOG|DASHBOARD{% endblock title %}
+{% block alertmsg %}
+{% if messages %}
+{% for message in messages %}
+<div {% if message.tags %} class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert" {% endif %}>
+    <strong>{{message}}</strong> 
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+ {% endfor %}
+{% endif %}
+{% endblock alertmsg %}
+{% block side %}
+<div class="col-sm-2 text-white">
+    <h4 class="text-white">Profile</h4>
+    <p class="lead">{{fullname}}</p> 
+     {% if groups %}
+    {% for gp in groups %}
+    <h5 class="text-white">{{gp}}</h5>
+    {% endfor %}
+    {% endif %} 
+</div>
+{% endblock side %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <h3 class="text-white">Dashboard Page</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-10 offset-1 mt-2">
+        <h3 class="text-center alert alert-info">Show Information</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-10 offset-1 mb-1">
+        <a href=" {% url 'addpost' %}" class="btn btn-success">Add</a>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-10 offset-1">
+        {% if posts %}
+            <table class="table table-bordered table-hover table-light">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts %}
+                    <tr>
+                        <th scope="row">{{post.id}}</th>
+                        <td>{{post.title}}</td>
+                        <td>{{post.description}}</td>
+                        <td class="text-center">
+                            <a href="{% url 'editpost' post.id %}" class="btn btn-warning btn-sm">Edit</a>
+                            {% if perms.blog.delete_blog %}
+                            <form action="{% url 'deletepost' post.id %}" method="post" class="d-inline-flex">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-danger btn-sm" value="Delete">
+                            </form>
+                            {% endif %}
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          {% else %}
+            <h3 class="text-center mt-3">No Records are there..</h3>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
